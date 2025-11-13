@@ -8,14 +8,40 @@
   </head>
   <body>
     <div class="container">
+      <!-- Tabs -->
       <div class="nav">
         <div id="homeTab" class="active">home</div>
         <div id="loginTab">login</div>
       </div>
+
+      <!-- Content -->
       <div class="content" id="content">
-        <div id="homeContent">home</div>
+        <div id="homeContent">home 🏡</div>
+
+        <!-- Single loginContent with BOTH buttons -->
         <div id="loginContent" style="display: none">
-          <button id="googleLoginBtn">Google Login</button>
+          <button id="googleLoginBtn" class="login-btn">
+            <img
+              src="https://www.svgrepo.com/show/475656/google-color.svg"
+              alt="Google"
+              class="icon"
+            />
+            Sign in with Google
+          </button>
+          <button id="githubLoginBtn" class="login-btn github">
+            <svg
+              class="icon"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="#fff"
+                d="M12 0C5.37 0 0 5.37 0 12c0 5.3 3.438 9.8 8.205 11.387.6.113.82-.263.82-.583 0-.287-.01-1.045-.016-2.05-3.338.725-4.042-1.608-4.042-1.608-.546-1.387-1.333-1.756-1.333-1.756-1.09-.745.082-.73.082-.73 1.205.085 1.84 1.236 1.84 1.236 1.07 1.834 2.807 1.304 3.492.997.108-.775.418-1.305.762-1.605-2.665-.3-5.466-1.335-5.466-5.932 0-1.31.468-2.38 1.236-3.22-.124-.303-.536-1.523.117-3.176 0 0 1.008-.322 3.3 1.23a11.48 11.48 0 013.003-.403c1.02.005 2.047.137 3.003.403 2.29-1.552 3.296-1.23 3.296-1.23.655 1.653.243 2.873.12 3.176.77.84 1.236 1.91 1.236 3.22 0 4.61-2.804 5.63-5.475 5.922.43.372.814 1.102.814 2.222 0 1.606-.015 2.898-.015 3.293 0 .323.216.7.825.581C20.565 21.796 24 17.3 24 12c0-6.63-5.37-12-12-12z"
+              />
+            </svg>
+            Sign in with GitHub
+          </button>
+
           <button id="secureBtn" style="display: none">
             Fetch Secure Data
           </button>
@@ -31,16 +57,19 @@
       import {
         getAuth,
         GoogleAuthProvider,
+        GithubAuthProvider,
         signInWithPopup,
         signOut,
       } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
       import { firebaseConfig } from "./firebaseConfig.js";
 
+      // Firebase init
       const app = initializeApp(firebaseConfig);
       const auth = getAuth(app);
-      const provider = new GoogleAuthProvider();
+      const googleProvider = new GoogleAuthProvider();
+      const githubProvider = new GithubAuthProvider();
 
-      //  Tabs
+      // Elements
       const homeTab = document.getElementById("homeTab");
       const loginTab = document.getElementById("loginTab");
       const homeContent = document.getElementById("homeContent");
@@ -49,7 +78,10 @@
       const secureBtn = document.getElementById("secureBtn");
       const logoutBtn = document.getElementById("logoutBtn");
       const dataBox = document.getElementById("dataBox");
+      const googleLoginBtn = document.getElementById("googleLoginBtn");
+      const githubLoginBtn = document.getElementById("githubLoginBtn");
 
+      // Tabs
       homeTab.addEventListener("click", () => {
         homeTab.classList.add("active");
         loginTab.classList.remove("active");
@@ -66,18 +98,34 @@
       });
 
       // Google Login
-      const googleLoginBtn = document.getElementById("googleLoginBtn");
       googleLoginBtn.addEventListener("click", async () => {
         try {
-          const result = await signInWithPopup(auth, provider);
+          const result = await signInWithPopup(auth, googleProvider);
           welcome.textContent = `Welcome, ${
             result.user.displayName || result.user.email
           }`;
           secureBtn.style.display = "inline-block";
           logoutBtn.style.display = "inline-block";
           googleLoginBtn.style.display = "none";
+          githubLoginBtn.style.display = "none";
         } catch (err) {
-          alert("Login failed: " + err.message);
+          alert("Google login failed: " + err.message);
+        }
+      });
+
+      // GitHub Login
+      githubLoginBtn.addEventListener("click", async () => {
+        try {
+          const result = await signInWithPopup(auth, githubProvider);
+          welcome.textContent = `Welcome, ${
+            result.user.displayName || result.user.email
+          }`;
+          secureBtn.style.display = "inline-block";
+          logoutBtn.style.display = "inline-block";
+          googleLoginBtn.style.display = "none";
+          githubLoginBtn.style.display = "none";
+        } catch (err) {
+          alert("GitHub login failed: " + err.message);
         }
       });
 
@@ -89,22 +137,19 @@
         logoutBtn.style.display = "none";
         secureBtn.style.display = "none";
         googleLoginBtn.style.display = "inline-block";
+        githubLoginBtn.style.display = "inline-block";
       });
 
       // Secure API
       secureBtn.addEventListener("click", async () => {
         const user = auth.currentUser;
         if (!user) return alert("Not logged in!");
-
         try {
           const token = await user.getIdToken();
-
           const res = await fetch("http://localhost:4000/secure-data", {
             headers: { Authorization: "Bearer " + token },
           });
-
           if (!res.ok) throw new Error("Failed to fetch secure data");
-
           const data = await res.json();
           dataBox.textContent = JSON.stringify(data, null, 2);
         } catch (err) {

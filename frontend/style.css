@@ -71,7 +71,42 @@ button:hover {
     font-size: 0.9rem;
     max-width: 400px;
     white-space: pre;
-    overflow-x:auto;
+    overflow-x: auto;
     box-sizing: border-box;
 
+}
+
+#githubLoginBtn {
+    display: inline-block;
+    padding: 10px 25px;
+    font-size: 1rem;
+    background: #24292e;
+    /* GitHub dark */
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 150px;
+    margin-top: 10px;
+}
+
+#githubLoginBtn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+button img.icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
+}
+
+button svg.icon {
+    width: 20px;
+    height: 20px;
+    margin-right: 10px;
+    vertical-align: middle;
 }
