@@ -1,0 +1,77 @@
+/* --- General layout --- */
+body {
+    font-family: Arial, sans-serif;
+    background: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: #333;
+}
+
+.container {
+    text-align: center;
+}
+
+/* --- Tabs --- */
+.nav {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.nav div {
+    padding: 5px 0;
+}
+
+.nav div.active {
+    border-bottom: 2px solid #333;
+    font-weight: bold;
+}
+
+/* --- Content --- */
+.content {
+    margin-top: 30px;
+}
+
+button {
+    padding: 10px 25px;
+    font-size: 1rem;
+    background: #fff;
+    color: #333;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    min-width: 150px;
+    margin-top: 10px;
+}
+
+button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+#welcome {
+    margin-top: 15px;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+#dataBox {
+    margin-top: 15px;
+    background: #f0f0f0;
+    padding: 15px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    max-width: 400px;
+    white-space: pre;
+    overflow-x:auto;
+    box-sizing: border-box;
+
+}

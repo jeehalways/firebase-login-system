@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clean Firebase Login</title>
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="container">
+      <div class="nav">
+        <div id="homeTab" class="active">home</div>
+        <div id="loginTab">login</div>
+      </div>
+      <div class="content" id="content">
+        <div id="homeContent">home</div>
+        <div id="loginContent" style="display: none">
+          <button id="googleLoginBtn">Google Login</button>
+          <button id="secureBtn" style="display: none">
+            Fetch Secure Data
+          </button>
+          <button id="logoutBtn" style="display: none">Logout</button>
+          <div id="welcome"></div>
+          <pre id="dataBox"></pre>
+        </div>
+      </div>
+    </div>
+
+    <script type="module">
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+      import {
+        getAuth,
+        GoogleAuthProvider,
+        signInWithPopup,
+        signOut,
+      } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-auth.js";
+      import { firebaseConfig } from "./firebaseConfig.js";
+
+      const app = initializeApp(firebaseConfig);
+      const auth = getAuth(app);
+      const provider = new GoogleAuthProvider();
+
+      //  Tabs
+      const homeTab = document.getElementById("homeTab");
+      const loginTab = document.getElementById("loginTab");
+      const homeContent = document.getElementById("homeContent");
+      const loginContent = document.getElementById("loginContent");
+      const welcome = document.getElementById("welcome");
+      const secureBtn = document.getElementById("secureBtn");
+      const logoutBtn = document.getElementById("logoutBtn");
+      const dataBox = document.getElementById("dataBox");
+
+      homeTab.addEventListener("click", () => {
+        homeTab.classList.add("active");
+        loginTab.classList.remove("active");
+        homeContent.style.display = "block";
+        loginContent.style.display = "none";
+        dataBox.textContent = "";
+      });
+
+      loginTab.addEventListener("click", () => {
+        loginTab.classList.add("active");
+        homeTab.classList.remove("active");
+        homeContent.style.display = "none";
+        loginContent.style.display = "block";
+      });
+
+      // Google Login
+      const googleLoginBtn = document.getElementById("googleLoginBtn");
+      googleLoginBtn.addEventListener("click", async () => {
+        try {
+          const result = await signInWithPopup(auth, provider);
+          welcome.textContent = `Welcome, ${
+            result.user.displayName || result.user.email
+          }`;
+          secureBtn.style.display = "inline-block";
+          logoutBtn.style.display = "inline-block";
+          googleLoginBtn.style.display = "none";
+        } catch (err) {
+          alert("Login failed: " + err.message);
+        }
+      });
+
+      // Logout
+      logoutBtn.addEventListener("click", async () => {
+        await signOut(auth);
+        welcome.textContent = "";
+        dataBox.textContent = "";
+        logoutBtn.style.display = "none";
+        secureBtn.style.display = "none";
+        googleLoginBtn.style.display = "inline-block";
+      });
+
+      // Secure API
+      secureBtn.addEventListener("click", async () => {
+        const user = auth.currentUser;
+        if (!user) return alert("Not logged in!");
+
+        try {
+          const token = await user.getIdToken();
+
+          const res = await fetch("http://localhost:4000/secure-data", {
+            headers: { Authorization: "Bearer " + token },
+          });
+
+          if (!res.ok) throw new Error("Failed to fetch secure data");
+
+          const data = await res.json();
+          dataBox.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          dataBox.textContent = "Error: " + err.message;
+        }
+      });
+    </script>
+  </body>
+</html>

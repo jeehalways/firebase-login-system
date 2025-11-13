@@ -1,0 +1,30 @@
+# --- Node.js ---
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# --- Backend ---
+backend/node_modules/
+backend/package-lock.json
+backend/.env
+backend/serviceAccountKey.json
+
+# --- Frontend ---
+frontend/node_modules/
+frontend/package-lock.json
+frontend/.env
+frontend/firebaseConfig.js        
+
+# --- OS-specific files ---
+.DS_Store
+Thumbs.db
+
+# --- IDE / Editor files ---
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# --- Logs ---
+*.log
